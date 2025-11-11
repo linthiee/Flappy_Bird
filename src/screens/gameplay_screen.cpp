@@ -104,10 +104,16 @@ namespace Gameplay
 			Obstacle::Update(obstacle, deltaTime);
 
 			HandleCollisionBetweenPlayerAndObstacle(player);
-			HandleCollisionBetweenPlayerAndObstacle(player2);
+			if (player2.isActive)
+			{
+				HandleCollisionBetweenPlayerAndObstacle(player2);
+			}
 
 			HandlePlayerFloorCollision(player);
-			HandlePlayerFloorCollision(player2);
+			if (player2.isActive)
+			{
+				HandlePlayerFloorCollision(player2);
+			}
 		}
 
 		UpdateButton();
