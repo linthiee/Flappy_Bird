@@ -3,10 +3,10 @@
 #include "raylib.h"
 
 #include "game/game.h"
-#include "geometry/rectangle.h"
 #include "interface/button.h"
 #include "game/game_constants.h"
 #include "interface/ui_constants.h"
+#include "screens/gameplay_screen.h"
 
 using namespace Game;
 using namespace UIConstants;
@@ -15,13 +15,14 @@ namespace MainMenu
 {
 	static Geometry::Rectangle logo;
 
-	static const int MAX_BUTTONS = 3;
+	static const int MAX_BUTTONS = 4;
 	static Button::Button buttons[MAX_BUTTONS];
-	static const std::string buttonNames[MAX_BUTTONS] = { "Play", "Credits", "Exit" };
+	static const std::string buttonNames[MAX_BUTTONS] = { "Play", "2 Players", "Credits","Exit" };
 
 	enum ButtonID
 	{
 		Play,
+		Multiplayer,
 		Credits,
 		Exit,
 	};
@@ -127,6 +128,12 @@ namespace MainMenu
 		if (buttons[Credits].clicked)
 		{
 			CosmicJump::currentScene = CosmicJump::Scenes::Credits;
+		}
+
+		if (buttons[Multiplayer].clicked)
+		{
+			Gameplay::secondPlayer::Enable();
+			CosmicJump::currentScene = CosmicJump::Scenes::Gameplay;	
 		}
 
 		if (buttons[Exit].clicked)

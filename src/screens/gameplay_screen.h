@@ -2,6 +2,11 @@
 
 namespace Gameplay
 {
+	namespace secondPlayer
+	{
+		void Enable();
+	}
+
 	void Init();
 	void Input();
 	void Update();

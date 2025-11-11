@@ -8,7 +8,6 @@ using namespace Game;
 
 namespace Player
 {
-	static const float DEFAULT_X = 200.0f;
 	static const float DEFAULT_WIDTH = 75.0f;
 	static const float DEFAULT_HEIGHT = 75.0f;
 
@@ -37,12 +36,12 @@ namespace Player
 		DrawRectangle(x, y, width, height, GREEN);
 	}
 
-	Player Create()
+	Player Create(float posX, float posY)
 	{
 		Player newPlayer = {};
 
-		newPlayer.rectangle.x = DEFAULT_X;
-		newPlayer.rectangle.y = static_cast<float>(SCREEN_HEIGHT) / 2.0f - DEFAULT_WIDTH / 2.0f;
+		newPlayer.rectangle.x = posX;
+		newPlayer.rectangle.y = posY;
 		newPlayer.rectangle.width = DEFAULT_WIDTH;
 		newPlayer.rectangle.height = DEFAULT_HEIGHT;
 		newPlayer.speedX = 0.0f;
@@ -52,10 +51,10 @@ namespace Player
 		return newPlayer;
 	}
 
-	void Reset(Player& player)
+	void Reset(Player& player, float defaultPosX, float defaultPosY)
 	{
-		player.rectangle.x = DEFAULT_X;
-		player.rectangle.y = static_cast<float>(SCREEN_HEIGHT) / 2.0f - DEFAULT_WIDTH / 2.0f;
+		player.rectangle.x = defaultPosX;
+		player.rectangle.y = defaultPosY;
 		player.speedY = 0.0f;
 	}
 

@@ -16,6 +16,8 @@ using namespace Collision;
 namespace Gameplay
 {
 	static Player::Player player;
+	static Player::Player player2;
+
 	static Obstacle::Obstacle obstacle;
 
 	static Button::Button button;
@@ -40,13 +42,16 @@ namespace Gameplay
 	static void UpdateButton();
 	static void DrawButton();
 	static void DrawTutorial();
-	static void HandleCollisionBetweenPlayerAndObstacle();
-	static void HandlePlayerFloorCollision();
+	static void HandleCollisionBetweenPlayerAndObstacle(Player::Player player);
+	static void HandlePlayerFloorCollision(Player::Player player);
 	static void Reset();
 
 	void Init()
 	{
-		player = Player::Create();
+		player = Player::Create(Game::DEFAULT_X_PLAYER_1, Game::DEFAULT_Y_PLAYER_1);
+		player2 = Player::Create(Game::DEFAULT_X_PLAYER_2, Game::DEFAULT_Y_PLAYER_2);
+		player2.isActive = false;
+
 		obstacle = Obstacle::Create();
 
 		InitButton();
@@ -74,6 +79,11 @@ namespace Gameplay
 				Player::Jump(player);
 			}
 		}
+
+		if (player2.isActive && IsKeyPressed(KEY_UP) && isGameStarted)
+		{
+			Player::Jump(player2);
+		}
 	}
 
 	void Update()
@@ -85,10 +95,19 @@ namespace Gameplay
 			Background::Update(deltaTime);
 
 			Player::Update(player, deltaTime);
+
+			if (player2.isActive)
+			{
+				Player::Update(player2, deltaTime);
+			}
+
 			Obstacle::Update(obstacle, deltaTime);
 
-			HandleCollisionBetweenPlayerAndObstacle();
-			HandlePlayerFloorCollision();
+			HandleCollisionBetweenPlayerAndObstacle(player);
+			HandleCollisionBetweenPlayerAndObstacle(player2);
+
+			HandlePlayerFloorCollision(player);
+			HandlePlayerFloorCollision(player2);
 		}
 
 		UpdateButton();
@@ -102,6 +121,12 @@ namespace Gameplay
 		Background::Draw();
 
 		Player::Draw(player);
+
+		if (player2.isActive)
+		{
+			Player::Draw(player2);
+		}
+
 		Obstacle::Draw(obstacle);
 
 		if (!isGameStarted)
@@ -162,19 +187,19 @@ namespace Gameplay
 		DrawText(TEXT_START_GAME.c_str(), textStartGameX, textStartGameY, TUTORIAL_FONT_SIZE, WHITE);
 	}
 
-	static void HandleCollisionBetweenPlayerAndObstacle()
+	static void HandleCollisionBetweenPlayerAndObstacle(Player::Player currentPlayer)
 	{
-		if (CheckCollisionRectangle(player.rectangle, obstacle.rectangleTop) ||
-			CheckCollisionRectangle(player.rectangle, obstacle.rectangleBottom))
+		if (CheckCollisionRectangle(currentPlayer.rectangle, obstacle.rectangleTop) ||
+			CheckCollisionRectangle(currentPlayer.rectangle, obstacle.rectangleBottom))
 		{
 			Reset();
 			isGameStarted = false;
 		}
 	}
 
-	static void HandlePlayerFloorCollision()
+	static void HandlePlayerFloorCollision(Player::Player currentPlayer)
 	{
-		if (player.rectangle.y + player.rectangle.height >= SCREEN_HEIGHT)
+		if (currentPlayer.rectangle.y + currentPlayer.rectangle.height >= SCREEN_HEIGHT)
 		{
 			Reset();
 			isGameStarted = false;
@@ -183,7 +208,12 @@ namespace Gameplay
 
 	static void Reset()
 	{
-		Player::Reset(player);
+		Player::Reset(player, Game::DEFAULT_X_PLAYER_1, Game::DEFAULT_Y_PLAYER_1);
 		Obstacle::Reset(obstacle);
+	}
+
+	void secondPlayer::Enable()
+	{
+		player2.isActive = true;
 	}
 }
