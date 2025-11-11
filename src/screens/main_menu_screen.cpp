@@ -122,6 +122,7 @@ namespace MainMenu
 
 		if (buttons[Play].clicked)
 		{
+			Gameplay::secondPlayer::Disable();
 			CosmicJump::currentScene = CosmicJump::Scenes::Gameplay;
 		}
 

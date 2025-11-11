@@ -50,7 +50,7 @@ namespace Gameplay
 	{
 		player = Player::Create(Game::DEFAULT_X_PLAYER_1, Game::DEFAULT_Y_PLAYER_1);
 		player2 = Player::Create(Game::DEFAULT_X_PLAYER_2, Game::DEFAULT_Y_PLAYER_2);
-		player2.isActive = false;
+		secondPlayer::Disable();
 
 		obstacle = Obstacle::Create();
 
@@ -209,11 +209,18 @@ namespace Gameplay
 	static void Reset()
 	{
 		Player::Reset(player, Game::DEFAULT_X_PLAYER_1, Game::DEFAULT_Y_PLAYER_1);
+		Player::Reset(player2, Game::DEFAULT_X_PLAYER_2, Game::DEFAULT_Y_PLAYER_2);
+
 		Obstacle::Reset(obstacle);
 	}
 
 	void secondPlayer::Enable()
 	{
 		player2.isActive = true;
+	}
+
+	void secondPlayer::Disable()
+	{
+		player2.isActive = false;
 	}
 }

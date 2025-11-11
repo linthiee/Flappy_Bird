@@ -5,6 +5,7 @@ namespace Gameplay
 	namespace secondPlayer
 	{
 		void Enable();
+		void Disable();
 	}
 
 	void Init();
