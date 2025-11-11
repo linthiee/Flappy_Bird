@@ -1,7 +1,5 @@
 #include "player.h"
 
-#include "raylib.h"
-
 #include "game/game_constants.h"
 
 using namespace Game;
@@ -26,14 +24,14 @@ namespace Player
 		LimitWithBorders(player);
 	}
 
-	void Draw(Player player)
+	void Draw(Player player, Color color)
 	{
 		int x = static_cast<int>(player.rectangle.x);
 		int y = static_cast<int>(player.rectangle.y);
 		int width = static_cast<int>(player.rectangle.width);
 		int height = static_cast<int>(player.rectangle.height);
 
-		DrawRectangle(x, y, width, height, GREEN);
+		DrawRectangle(x, y, width, height, color);
 	}
 
 	Player Create(float posX, float posY)

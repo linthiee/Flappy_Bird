@@ -28,7 +28,8 @@ namespace Gameplay
 	static const float BUTTON_MARGIN = 10.0f;
 
 	static const std::string TEXT_CONTROLS = "Controls: SPACE to jump";
-	static const std::string TEXT_START_GAME = "Press SPACE to start the game";
+	static const std::string TEXT_START_GAME = "Press SPACE to jump and start the game";
+	static const std::string TEXT_JUMP = "Second player press UP ARROW KEY to jump";
 
 	static const int TUTORIAL_FONT_SIZE = 36;
 	static const int TUTORIAL_TEXT_SPACING = 90;
@@ -126,11 +127,11 @@ namespace Gameplay
 
 		Background::Draw();
 
-		Player::Draw(player);
+		Player::Draw(player, GREEN);
 
 		if (player2.isActive)
 		{
-			Player::Draw(player2);
+			Player::Draw(player2, MAGENTA);
 		}
 
 		Obstacle::Draw(obstacle);
@@ -176,10 +177,12 @@ namespace Gameplay
 	static void DrawTutorial()
 	{
 		int textControlsWidth = MeasureText(TEXT_CONTROLS.c_str(), TUTORIAL_FONT_SIZE);
+		int textJumpWidth = MeasureText(TEXT_JUMP.c_str(), TUTORIAL_FONT_SIZE);
 		int textStartGameWidth = MeasureText(TEXT_START_GAME.c_str(), TUTORIAL_FONT_SIZE);
 
 		int textControlsX = (SCREEN_WIDTH - textControlsWidth) / 2;
 		int textStartGameX = (SCREEN_WIDTH - textStartGameWidth) / 2;
+		int textJumpX = (SCREEN_WIDTH - textJumpWidth) / 2;
 
 		int totalBlockHeight = TUTORIAL_FONT_SIZE + TUTORIAL_TEXT_SPACING + TUTORIAL_FONT_SIZE;
 
@@ -187,10 +190,16 @@ namespace Gameplay
 
 		int textControlsY = blockTopY;
 		int textStartGameY = textControlsY + TUTORIAL_FONT_SIZE + TUTORIAL_TEXT_SPACING;
+		int textJumpY = textControlsY + 50 + TUTORIAL_FONT_SIZE + TUTORIAL_TEXT_SPACING;
 
 		DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, TUTORIAL_BACKGROUND);
 		DrawText(TEXT_CONTROLS.c_str(), textControlsX, textControlsY, TUTORIAL_FONT_SIZE, WHITE);
 		DrawText(TEXT_START_GAME.c_str(), textStartGameX, textStartGameY, TUTORIAL_FONT_SIZE, WHITE);
+
+		if (player2.isActive)
+		{
+			DrawText(TEXT_JUMP.c_str(), textJumpX, textJumpY, TUTORIAL_FONT_SIZE, WHITE);
+		}
 	}
 
 	static void HandleCollisionBetweenPlayerAndObstacle(Player::Player currentPlayer)

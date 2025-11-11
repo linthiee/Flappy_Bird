@@ -1,4 +1,5 @@
 #pragma once
+#include "raylib.h"
 
 #include "geometry/rectangle.h"
 
@@ -13,7 +14,7 @@ namespace Player
 	};
 
 	void Update(Player& player, float deltaTime);
-	void Draw(Player player);
+	void Draw(Player player, Color color);
 
 	Player Create(float posX, float posY);
 	void Reset(Player& player, float posX, float posY);
