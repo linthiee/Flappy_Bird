@@ -60,6 +60,7 @@ namespace CosmicJump
 
 			break;
 		case CosmicJump::Scenes::Gameplay:
+		case CosmicJump::Scenes::Multiplayer:
 
 			Gameplay::Input();
 
@@ -87,6 +88,7 @@ namespace CosmicJump
 
 			break;
 		case CosmicJump::Scenes::Gameplay:
+		case CosmicJump::Scenes::Multiplayer:
 
 			Gameplay::Update();
 
@@ -114,6 +116,7 @@ namespace CosmicJump
 
 			break;
 		case CosmicJump::Scenes::Gameplay:
+		case CosmicJump::Scenes::Multiplayer:
 
 			Gameplay::Draw();
 

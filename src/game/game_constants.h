@@ -13,9 +13,9 @@ namespace Game
 	static const float DEFAULT_WIDTH = 75.0f;
 	static const float DEFAULT_HEIGHT = 75.0f;
 
+	const bool isColliding = false;
+	const bool wasColliding = false;
+
 	const float DEFAULT_X_PLAYER_1 = 200.0f;
 	const float DEFAULT_X_PLAYER_2 = 400.0f;
-
-	const float DEFAULT_Y_PLAYER_1 = static_cast<float>(SCREEN_HEIGHT) / 2.0f - DEFAULT_WIDTH / 2.0f;
-	const float DEFAULT_Y_PLAYER_2 = static_cast<float>(SCREEN_HEIGHT) / 4.0f - DEFAULT_WIDTH / 2.0f;
 }

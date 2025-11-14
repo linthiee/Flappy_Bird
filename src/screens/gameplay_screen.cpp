@@ -27,6 +27,9 @@ namespace Gameplay
 	static const float BUTTON_HEIGHT = 60.0f;
 	static const float BUTTON_MARGIN = 10.0f;
 
+	extern float DEFAULT_Y_PLAYER_1 = static_cast<float>(SCREEN_HEIGHT) / 2.0f - DEFAULT_WIDTH / 2.0f;
+	extern float DEFAULT_Y_PLAYER_2 = static_cast<float>(SCREEN_HEIGHT) / 4.0f - DEFAULT_WIDTH / 2.0f;
+
 	static const std::string TEXT_CONTROLS = "Controls: SPACE to jump";
 	static const std::string TEXT_START_GAME = "Press SPACE to jump and start the game";
 	static const std::string TEXT_JUMP = "Second player press UP ARROW KEY to jump";
@@ -43,14 +46,15 @@ namespace Gameplay
 	static void UpdateButton();
 	static void DrawButton();
 	static void DrawTutorial();
+	static void DrawScore();
 	static void HandleCollisionBetweenPlayerAndObstacle(Player::Player player);
 	static void HandlePlayerFloorCollision(Player::Player player);
-	static void Reset();
+	static void Scored(Player::Player& player, Obstacle::Obstacle obstacle);
 
 	void Init()
 	{
-		player = Player::Create(Game::DEFAULT_X_PLAYER_1, Game::DEFAULT_Y_PLAYER_1);
-		player2 = Player::Create(Game::DEFAULT_X_PLAYER_2, Game::DEFAULT_Y_PLAYER_2);
+		player = Player::Create(Game::DEFAULT_X_PLAYER_1, Gameplay::DEFAULT_Y_PLAYER_1);
+		player2 = Player::Create(Game::DEFAULT_X_PLAYER_2, Gameplay::DEFAULT_Y_PLAYER_2);
 		secondPlayer::Disable();
 
 		obstacle = Obstacle::Create();
@@ -115,6 +119,8 @@ namespace Gameplay
 			{
 				HandlePlayerFloorCollision(player2);
 			}
+
+			Scored(player, obstacle);
 		}
 
 		UpdateButton();
@@ -124,6 +130,8 @@ namespace Gameplay
 	{
 		BeginDrawing();
 		ClearBackground(BLACK);
+
+		DrawScore();
 
 		Background::Draw();
 
@@ -202,6 +210,17 @@ namespace Gameplay
 		}
 	}
 
+	static void DrawScore()
+	{
+		std::string scoreText = "Score: " + std::to_string(player.score);
+
+		int scoreTextWidth = MeasureText(scoreText.c_str(), TUTORIAL_FONT_SIZE);
+		int scoreTextX = static_cast<int>(SCREEN_WIDTH - scoreTextWidth - BUTTON_MARGIN);
+		int scoreTextY = static_cast<int>(BUTTON_MARGIN + BUTTON_HEIGHT + BUTTON_MARGIN);
+
+		DrawText(scoreText.c_str(), scoreTextX, scoreTextY, TUTORIAL_FONT_SIZE, WHITE);
+	}
+
 	static void HandleCollisionBetweenPlayerAndObstacle(Player::Player currentPlayer)
 	{
 		if (CheckCollisionRectangle(currentPlayer.rectangle, obstacle.rectangleTop) ||
@@ -221,10 +240,26 @@ namespace Gameplay
 		}
 	}
 
-	static void Reset()
+	static void Scored(Player::Player& currentPlayer, Obstacle::Obstacle currentObstacle)
 	{
-		Player::Reset(player, Game::DEFAULT_X_PLAYER_1, Game::DEFAULT_Y_PLAYER_1);
-		Player::Reset(player2, Game::DEFAULT_X_PLAYER_2, Game::DEFAULT_Y_PLAYER_2);
+		if (currentPlayer.rectangle.x < currentObstacle.rectangleBottom.x && currentPlayer.rectangle.x + currentPlayer.rectangle.width > currentObstacle.rectangleBottom.x)
+		{
+			if (!currentPlayer.isColliding)
+			{
+				currentPlayer.score++;
+			}
+			currentPlayer.isColliding = true;
+		}
+		else
+		{
+			currentPlayer.isColliding = false;
+		}
+	}
+
+	void Reset()
+	{
+		Player::Reset(player, Game::DEFAULT_X_PLAYER_1, Gameplay::DEFAULT_Y_PLAYER_1);
+		Player::Reset(player2, Game::DEFAULT_X_PLAYER_2, Gameplay::DEFAULT_Y_PLAYER_2);
 
 		Obstacle::Reset(obstacle);
 	}
@@ -238,4 +273,5 @@ namespace Gameplay
 	{
 		player2.isActive = false;
 	}
+
 }

@@ -2,6 +2,9 @@
 
 #include "game/game_constants.h"
 
+
+#include <iostream>
+
 using namespace Game;
 
 namespace Player
@@ -11,6 +14,8 @@ namespace Player
 
 	static const float GRAVITY = 1800.0f;
 	const float JUMP_STRENGTH = -650.0f;
+
+	static bool hasScored = false;
 
 	static void UpdateGravity(Player& player, float deltaTime);
 	static void LimitWithBorders(Player& player);
@@ -45,6 +50,8 @@ namespace Player
 		newPlayer.speedX = 0.0f;
 		newPlayer.speedY = 0.0f;
 		newPlayer.isActive = true;
+		newPlayer.isColliding = false;
+		newPlayer.wasColliding = false;
 
 		return newPlayer;
 	}

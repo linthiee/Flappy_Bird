@@ -11,6 +11,9 @@ namespace Player
 		float speedX;
 		float speedY;
 		bool isActive;
+		int score;
+		bool isColliding;
+		bool wasColliding;
 	};
 
 	void Update(Player& player, float deltaTime);
