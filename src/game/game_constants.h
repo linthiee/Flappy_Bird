@@ -18,4 +18,6 @@ namespace Game
 
 	const float DEFAULT_Y_PLAYER_1 = static_cast<float>(SCREEN_HEIGHT) / 2.0f - DEFAULT_WIDTH / 2.0f;
 	const float DEFAULT_Y_PLAYER_2 = static_cast<float>(SCREEN_HEIGHT) / 4.0f - DEFAULT_WIDTH / 2.0f;
+
+	
 }

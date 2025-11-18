@@ -148,7 +148,7 @@ namespace Gameplay
 
 	void Close()
 	{
-
+		Obstacle::Close();
 	}
 
 	static void InitButton()

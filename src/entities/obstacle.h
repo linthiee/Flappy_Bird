@@ -10,6 +10,8 @@ namespace Obstacle
 		Geometry::Rectangle rectangleBottom;
 		float speedX;
 		bool isActive;
+
+		int variant;
 	};
 
 	void Update(Obstacle& obstacle, float deltaTime);
@@ -17,4 +19,6 @@ namespace Obstacle
 
 	Obstacle Create();
 	void Reset(Obstacle& obstacle);
+
+	void Close();
 }
