@@ -39,18 +39,29 @@ namespace Obstacle
 		Texture2D currentTexture;
 		switch (obstacle.variant)
 		{
-		case 0: currentTexture = obstacleTexture1; break;
-		case 1: currentTexture = obstacleTexture2; break;
-		case 2: currentTexture = obstacleTexture3; break;
-		default: currentTexture = obstacleTexture1; break;
+		case 0:
+			currentTexture = obstacleTexture1;
+			break;
+		case 1: 
+			currentTexture = obstacleTexture2;
+			break;
+		case 2:
+			currentTexture = obstacleTexture3;
+			break;
+		default: 
+			currentTexture = obstacleTexture1;
+			break;
 		}
 
-		if (currentTexture.id <= 0) return;
+		if (currentTexture.id <= 0)
+		{
+			return;
+		}
 
 		float texW = static_cast<float>(currentTexture.width);
 		float texH = static_cast<float>(currentTexture.height);
 
-		const float ENLARGE_FACTOR = 1.8f; // <-- AJUSTA ESTE VALOR SEGÚN NECESITES
+		const float ENLARGE_FACTOR = 1.8f;
 
 		float baseScale = obstacle.rectangleTop.width / texW;
 		float scale = baseScale * ENLARGE_FACTOR;
@@ -60,28 +71,26 @@ namespace Obstacle
 
 		float visualPaddingX = (obstacle.rectangleTop.width - visualWidth) / 2.0f;
 
-		// ... el resto de la función Draw es la misma ...
-		// --- DIBUJAR OBSTÁCULO SUPERIOR (Techo) ---
 		{
 			float gapEdgeY = obstacle.rectangleTop.y + obstacle.rectangleTop.height;
 
-			Rectangle dest = {
-				obstacle.rectangleTop.x + visualPaddingX, // Usamos el padding ajustado
+			Rectangle dest =
+			{
+				obstacle.rectangleTop.x + visualPaddingX,
 				gapEdgeY - visualHeight,
 				visualWidth,
 				visualHeight
 			};
 
-			Rectangle source = { 0.0f, 0.0f, texW, -texH }; // Asumiendo que inviertes el de arriba
+			Rectangle source = { 0.0f, 0.0f, texW, -texH };
 
 			DrawTexturePro(currentTexture, source, dest, { 0.0f, 0.0f }, 0.0f, WHITE);
 		}
 
-
-		// --- DIBUJAR OBSTÁCULO INFERIOR (Suelo) ---
 		{
-			Rectangle dest = {
-				obstacle.rectangleBottom.x + visualPaddingX, // Usamos el padding ajustado
+			Rectangle dest =
+			{
+				obstacle.rectangleBottom.x + visualPaddingX, 
 				obstacle.rectangleBottom.y,
 				visualWidth,
 				visualHeight

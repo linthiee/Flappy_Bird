@@ -4,6 +4,8 @@
 
 #include "game/game_constants.h"
 
+#include <cmath>
+
 using namespace Game;
 
 namespace Background
@@ -11,6 +13,12 @@ namespace Background
 	static const float PARALLAX_SPEED_BACK = 45.0f;
 	static const float PARALLAX_SPEED_MID = 145.0f;
 	static const float PARALLAX_SPEED_FRONT = 360.0f;
+
+	const Vector2 EYE_CENTER_POSITION = { 1110.0f, 270.0f };
+
+	const float EYE_RADIUS_X = 15.0f;
+	const float EYE_RADIUS_Y = 50.0f;
+	const float PUPIL_SPEED = 5.0f;
 
 	struct Background
 	{
@@ -24,6 +32,8 @@ namespace Background
 	static Background gameplayMid;
 	static Background gameplayFront;
 	static Background gameplayFront2;
+
+	static Background pupil;
 
 	static float backgroundScale;
 	static float limit;
@@ -61,6 +71,7 @@ namespace Background
 		gameplayMid.texture = LoadTexture("res/textures/backgrounds/gameplay/mid.png");
 		gameplayFront.texture = LoadTexture("res/textures/backgrounds/gameplay/front.png");
 		gameplayFront2.texture = LoadTexture("res/textures/backgrounds/gameplay/front2.png");
+		pupil.texture = LoadTexture("res/textures/backgrounds/gameplay/pupil.png");
 
 		gameplayBack.x = 0.0f;
 		gameplayBack.y = 0.0f;
@@ -116,7 +127,7 @@ namespace Background
 		Vector2 backPosTwo = { gameplayBack.x + limit, gameplayBack.y };
 
 		Vector2 midPosOne = { gameplayMid.x, gameplayMid.y };
-	//	Vector2 midPosTwo = { gameplayMid.x + limit, gameplayMid.y };
+		//	Vector2 midPosTwo = { gameplayMid.x + limit, gameplayMid.y };
 
 		Vector2 frontPosOne = { gameplayFront.x, gameplayFront.y };
 		Vector2 frontPosTwo = { gameplayFront.x + limit, gameplayFront.y };
@@ -135,5 +146,26 @@ namespace Background
 
 		DrawTextureEx(gameplayFront2.texture, front2PosOne, 0.0f, backgroundScale, WHITE);
 		DrawTextureEx(gameplayFront2.texture, front2PosTwo, 0.0f, backgroundScale, WHITE);
+	}
+
+	void KrakenEye::Draw(Vector2 playerPosition, float deltaTime)
+	{
+		static Vector2 currentPupilPos = EYE_CENTER_POSITION;
+
+		float dx = playerPosition.x - EYE_CENTER_POSITION.x;
+		float dy = playerPosition.y - EYE_CENTER_POSITION.y;
+		float angle = atan2(dy, dx); 
+
+		float targetX = EYE_CENTER_POSITION.x + cos(angle) * EYE_RADIUS_X;
+		float targetY = EYE_CENTER_POSITION.y + sin(angle) * EYE_RADIUS_Y;
+
+		currentPupilPos.x += (targetX - currentPupilPos.x) * PUPIL_SPEED * deltaTime;
+		currentPupilPos.y += (targetY - currentPupilPos.y) * PUPIL_SPEED * deltaTime;
+
+		Vector2 drawPos = {};
+		drawPos.x = currentPupilPos.x - (pupil.texture.width / 2.0f);
+		drawPos.y = currentPupilPos.y - (pupil.texture.height / 2.0f);
+
+		DrawTextureV(pupil.texture, drawPos, WHITE);
 	}
 }

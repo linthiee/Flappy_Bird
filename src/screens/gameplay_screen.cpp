@@ -125,7 +125,10 @@ namespace Gameplay
 		BeginDrawing();
 		ClearBackground(BLACK);
 
+		Vector2 playerCenter = { player.rectangle.x + player.rectangle.width / 2, player.rectangle.y + player.rectangle.height / 2 };
+
 		Background::Draw();
+		Background::KrakenEye::Draw(playerCenter, deltaTime); 
 
 		Player::Draw(player, GREEN);
 
