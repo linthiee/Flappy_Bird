@@ -21,6 +21,7 @@ namespace Obstacle
 	static const float SPAWN_X_OFFSET = 50.0f;
 	static const float MARGIN_TOP = 50.0f;
 	static const float MARGIN_BOTTOM = 50.0f;
+	static const float OBSTACLE_HEIGHT = 800.0f;
 
 	static void InitTextures();
 
@@ -33,66 +34,64 @@ namespace Obstacle
 		Move(obstacle, deltaTime);
 		Recycle(obstacle);
 	}
-
 	void Draw(Obstacle obstacle)
 	{
 		Texture2D currentTexture;
 		switch (obstacle.variant)
 		{
-		case 0:
-		
-			currentTexture = obstacleTexture1;
-			break;
-		
-		case 1:
-		
-			currentTexture = obstacleTexture2;
-			break;
-		
-		case 2:
-		
-			currentTexture = obstacleTexture3;
-			break;
-		
-		default:
-		
-			currentTexture = obstacleTexture1;
-			break;
+		case 0: currentTexture = obstacleTexture1; break;
+		case 1: currentTexture = obstacleTexture2; break;
+		case 2: currentTexture = obstacleTexture3; break;
+		default: currentTexture = obstacleTexture1; break;
 		}
 
-		if (currentTexture.id <= 0)
-		{
-			return;
-		}
+		if (currentTexture.id <= 0) return;
 
 		float texW = static_cast<float>(currentTexture.width);
 		float texH = static_cast<float>(currentTexture.height);
 
-		Rectangle sourceTop = { 0.0f, 0.0f, texW, -texH };
-		Rectangle sourceBottom = { 0.0f, 0.0f, texW, texH };
+		const float ENLARGE_FACTOR = 1.8f; // <-- AJUSTA ESTE VALOR SEGÚN NECESITES
 
-		float visualPadding = 20.0f;
+		float baseScale = obstacle.rectangleTop.width / texW;
+		float scale = baseScale * ENLARGE_FACTOR;
 
-		Rectangle destTop =
+		float visualWidth = texW * scale;
+		float visualHeight = texH * scale;
+
+		float visualPaddingX = (obstacle.rectangleTop.width - visualWidth) / 2.0f;
+
+		// ... el resto de la función Draw es la misma ...
+		// --- DIBUJAR OBSTÁCULO SUPERIOR (Techo) ---
 		{
-			obstacle.rectangleTop.x - (visualPadding / 2),
-			obstacle.rectangleTop.y,
-			obstacle.rectangleTop.width + visualPadding,
-			obstacle.rectangleTop.height
-		};
+			float gapEdgeY = obstacle.rectangleTop.y + obstacle.rectangleTop.height;
 
-		Rectangle destBottom =
+			Rectangle dest = {
+				obstacle.rectangleTop.x + visualPaddingX, // Usamos el padding ajustado
+				gapEdgeY - visualHeight,
+				visualWidth,
+				visualHeight
+			};
+
+			Rectangle source = { 0.0f, 0.0f, texW, -texH }; // Asumiendo que inviertes el de arriba
+
+			DrawTexturePro(currentTexture, source, dest, { 0.0f, 0.0f }, 0.0f, WHITE);
+		}
+
+
+		// --- DIBUJAR OBSTÁCULO INFERIOR (Suelo) ---
 		{
-			obstacle.rectangleBottom.x - (visualPadding / 2),
-			obstacle.rectangleBottom.y,
-			obstacle.rectangleBottom.width + visualPadding,
-			obstacle.rectangleBottom.height
-		};
+			Rectangle dest = {
+				obstacle.rectangleBottom.x + visualPaddingX, // Usamos el padding ajustado
+				obstacle.rectangleBottom.y,
+				visualWidth,
+				visualHeight
+			};
 
-		DrawTexturePro(currentTexture, sourceTop, destTop, { 0.0f, 0.0f }, 0.0f, WHITE);
-		DrawTexturePro(currentTexture, sourceBottom, destBottom, { 0.0f, 0.0f }, 0.0f, WHITE);	
+			Rectangle source = { 0.0f, 0.0f, texW, texH };
+
+			DrawTexturePro(currentTexture, source, dest, { 0.0f, 0.0f }, 0.0f, WHITE);
+		}
 	}
-
 	Obstacle Create()
 	{
 		InitTextures();
@@ -138,24 +137,23 @@ namespace Obstacle
 	static void RandomizeVerticalPosition(Obstacle& obstacle)
 	{
 		float gap = GetFloatRandomBetween(GAP_MIN, GAP_MAX);
+
 		float maxY = static_cast<float>(SCREEN_HEIGHT) - MARGIN_BOTTOM - gap;
 		float gapY = GetFloatRandomBetween(MARGIN_TOP, maxY);
 
 		float x = static_cast<float>(SCREEN_WIDTH) + SPAWN_X_OFFSET;
 
-		float topHeight = gapY;
-		float bottomY = gapY + gap;
-		float bottomHeight = static_cast<float>(SCREEN_HEIGHT) - bottomY;
-
 		obstacle.rectangleTop.x = x;
-		obstacle.rectangleTop.y = 0.0f;
+
+		obstacle.rectangleTop.y = gapY - OBSTACLE_HEIGHT;
 		obstacle.rectangleTop.width = WIDTH;
-		obstacle.rectangleTop.height = topHeight;
+		obstacle.rectangleTop.height = OBSTACLE_HEIGHT;
 
 		obstacle.rectangleBottom.x = x;
-		obstacle.rectangleBottom.y = bottomY;
+
+		obstacle.rectangleBottom.y = gapY + gap;
 		obstacle.rectangleBottom.width = WIDTH;
-		obstacle.rectangleBottom.height = bottomHeight;
+		obstacle.rectangleBottom.height = OBSTACLE_HEIGHT;
 	}
 
 	void Close()
