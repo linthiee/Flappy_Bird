@@ -1,10 +1,10 @@
 #include "background/background_manager.h"
 
+#include <cmath>
+
 #include "raylib.h"
 
 #include "game/game_constants.h"
-
-#include <cmath>
 
 using namespace Game;
 
@@ -43,6 +43,27 @@ namespace Background
 	static void InitBackground();
 	static void UpdateBackground(float deltaTime);
 	static void DrawBackground();
+
+	void KrakenEye::Draw(Vector2 playerPosition, float deltaTime)
+	{
+		static Vector2 currentPupilPos = EYE_CENTER_POSITION;
+
+		float dx = playerPosition.x - EYE_CENTER_POSITION.x;
+		float dy = playerPosition.y - EYE_CENTER_POSITION.y;
+		float angle = atan2(dy, dx);
+
+		float targetX = EYE_CENTER_POSITION.x + cos(angle) * EYE_RADIUS_X;
+		float targetY = EYE_CENTER_POSITION.y + sin(angle) * EYE_RADIUS_Y;
+
+		currentPupilPos.x += (targetX - currentPupilPos.x) * PUPIL_SPEED * deltaTime;
+		currentPupilPos.y += (targetY - currentPupilPos.y) * PUPIL_SPEED * deltaTime;
+
+		Vector2 drawPos = {};
+		drawPos.x = currentPupilPos.x - (pupil.texture.width / 2.0f);
+		drawPos.y = currentPupilPos.y - (pupil.texture.height / 2.0f);
+
+		DrawTextureV(pupil.texture, drawPos, WHITE);
+	}
 
 	void Init()
 	{
@@ -161,26 +182,5 @@ namespace Background
 
 		DrawTextureEx(gameplayFront2.texture, front2PosOne, 0.0f, backgroundScale, WHITE);
 		DrawTextureEx(gameplayFront2.texture, front2PosTwo, 0.0f, backgroundScale, WHITE);
-	}
-
-	void KrakenEye::Draw(Vector2 playerPosition, float deltaTime)
-	{
-		static Vector2 currentPupilPos = EYE_CENTER_POSITION;
-
-		float dx = playerPosition.x - EYE_CENTER_POSITION.x;
-		float dy = playerPosition.y - EYE_CENTER_POSITION.y;
-		float angle = atan2(dy, dx); 
-
-		float targetX = EYE_CENTER_POSITION.x + cos(angle) * EYE_RADIUS_X;
-		float targetY = EYE_CENTER_POSITION.y + sin(angle) * EYE_RADIUS_Y;
-
-		currentPupilPos.x += (targetX - currentPupilPos.x) * PUPIL_SPEED * deltaTime;
-		currentPupilPos.y += (targetY - currentPupilPos.y) * PUPIL_SPEED * deltaTime;
-
-		Vector2 drawPos = {};
-		drawPos.x = currentPupilPos.x - (pupil.texture.width / 2.0f);
-		drawPos.y = currentPupilPos.y - (pupil.texture.height / 2.0f);
-
-		DrawTextureV(pupil.texture, drawPos, WHITE);
 	}
 }

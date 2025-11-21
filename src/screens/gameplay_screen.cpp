@@ -85,6 +85,16 @@ namespace Gameplay
 	static void Reset();
 	static void TriggerGameOver();
 
+	void secondPlayer::Enable()
+	{
+		player2.isActive = true;
+	}
+
+	void secondPlayer::Disable()
+	{
+		player2.isActive = false;
+	}
+
 	void Init()
 	{
 		player = Player::Create(Game::DEFAULT_X_PLAYER_1, Game::DEFAULT_Y_PLAYER_1);
@@ -412,19 +422,6 @@ namespace Gameplay
 		DrawText(TEXT_RESTART.c_str(), restartX, centerY + 100, smallFontSize, LIGHTGRAY);
 	}
 
-	static void TriggerGameOver()
-	{
-		isGameOver = true;
-		isGameStarted = false;
-
-		lastScore = player.score;
-
-		if (lastScore > highScore)
-		{
-			highScore = lastScore;
-		}
-	}
-
 	static void HandleCollisionBetweenPlayerAndObstacle(Player::Player currentPlayer)
 	{
 		if (CheckCollisionRectangle(currentPlayer.rectangle, obstacle.rectangleTop) ||
@@ -468,13 +465,16 @@ namespace Gameplay
 		Obstacle::Reset(obstacle);
 	}
 
-	void secondPlayer::Enable()
+	static void TriggerGameOver()
 	{
-		player2.isActive = true;
-	}
+		isGameOver = true;
+		isGameStarted = false;
 
-	void secondPlayer::Disable()
-	{
-		player2.isActive = false;
+		lastScore = player.score;
+
+		if (lastScore > highScore)
+		{
+			highScore = lastScore;
+		}
 	}
 }

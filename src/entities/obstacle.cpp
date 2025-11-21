@@ -119,12 +119,6 @@ namespace Obstacle
 		return newObstacle;
 	}
 
-	void Reset(Obstacle& obstacle)
-	{
-		RandomizeVerticalPosition(obstacle);
-		obstacle.passed = false; 
-	}
-
 	bool CheckForScore(Obstacle& obstacle, float birdXPosition)
 	{
 		if (obstacle.isActive && !obstacle.passed && (obstacle.rectangleTop.x + obstacle.rectangleTop.width < birdXPosition))
@@ -133,6 +127,19 @@ namespace Obstacle
 			return true;
 		}
 		return false;
+	}
+
+	void Reset(Obstacle& obstacle)
+	{
+		RandomizeVerticalPosition(obstacle);
+		obstacle.passed = false; 
+	}
+
+	void Close()
+	{
+		UnloadTexture(obstacleTexture1);
+		UnloadTexture(obstacleTexture2);
+		UnloadTexture(obstacleTexture3);
 	}
 
 	void InitTextures()
@@ -178,12 +185,5 @@ namespace Obstacle
 		obstacle.rectangleBottom.y = gapY + gap;
 		obstacle.rectangleBottom.width = WIDTH;
 		obstacle.rectangleBottom.height = OBSTACLE_HEIGHT;
-	}
-
-	void Close()
-	{
-		UnloadTexture(obstacleTexture1);
-		UnloadTexture(obstacleTexture2);
-		UnloadTexture(obstacleTexture3);
 	}
 }

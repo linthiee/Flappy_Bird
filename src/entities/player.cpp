@@ -105,6 +105,12 @@ namespace Player
 		}
 	}
 
+	void Close()
+	{
+		UnloadTexture(playerUpTexture);
+		UnloadTexture(playerDownTexture);
+	}
+
 	static void InitTexture()
 	{
 		playerUpTexture = LoadTexture("res/textures/player/raven_up.png");
@@ -134,11 +140,5 @@ namespace Player
 			player.rectangle.y = SCREEN_HEIGHT - DEFAULT_HEIGHT;
 			player.speedY = 0.0f;
 		}
-	}
-
-	void Close()
-	{
-		UnloadTexture(playerUpTexture);
-		UnloadTexture(playerDownTexture);
 	}
 }

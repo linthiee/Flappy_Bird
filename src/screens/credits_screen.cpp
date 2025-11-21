@@ -32,7 +32,6 @@ namespace Credits
 	static const std::string LABEL_ART = "Art by:";
 
 	static const std::string AUTHOR_ART_CLICK = "Laura Srur";
-	static const std::string AUTHOR_ART_REST = " & Eluney Mousseigne";
 
 	static const std::string LABEL_MUSIC = "Menu & Gameplay music by:";
 	static const std::string AUTHOR_MUSIC = "May Genko (retro 8-bit rpg music)";
@@ -149,13 +148,11 @@ namespace Credits
 
 		{
 			int widthClick = MeasureText(AUTHOR_ART_CLICK.c_str(), FONT_SIZE_AUTHOR);
-			int widthRest = MeasureText(AUTHOR_ART_REST.c_str(), FONT_SIZE_AUTHOR);
-			int totalWidth = widthClick + widthRest;
+			int totalWidth = widthClick;
 
 			int startX = (SCREEN_WIDTH - totalWidth) / 2;
 
 			DrawClickableText(AUTHOR_ART_CLICK, startX, currentY, FONT_SIZE_AUTHOR, URL_ART);
-			DrawText(AUTHOR_ART_REST.c_str(), startX + widthClick, currentY, FONT_SIZE_AUTHOR, WHITE);
 		}
 		currentY += SECTION_SPACING;
 
@@ -169,11 +166,34 @@ namespace Credits
 		DrawClickableText(AUTHOR_SFX, GetCenteredX(AUTHOR_SFX, FONT_SIZE_AUTHOR), currentY, FONT_SIZE_AUTHOR, URL_SFX);
 	}
 
+	static void InitButton()
+	{
+		float x = static_cast<float>(SCREEN_WIDTH) / 2.0f - BUTTON_WIDTH / 2.0f;
+		float y = static_cast<float>(SCREEN_HEIGHT) - BUTTON_HEIGHT - BUTTON_MARGIN_BOTTOM;
+
+		buttonBack = Button::Create(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, buttonName);
+	}
+
+	static void UpdateButton()
+	{
+		Button::Update(buttonBack);
+
+		if (buttonBack.clicked)
+		{
+			CosmicJump::currentScene = CosmicJump::Scenes::MainMenu;
+		}
+	}
+
+	static void DrawButton()
+	{
+		Button::Draw(buttonBack);
+	}
+
 	static void DrawClickableText(const std::string& text, int x, int y, int fontSize, const char* url)
 	{
 		int textWidth = MeasureText(text.c_str(), fontSize);
 
-		Rectangle textRec = 
+		Rectangle textRec =
 		{
 			static_cast<float>(x),
 			static_cast<float>(y),
@@ -204,28 +224,5 @@ namespace Credits
 		{
 			DrawLine(x, y + fontSize, x + textWidth, y + fontSize, SKYBLUE);
 		}
-	}
-
-	static void InitButton()
-	{
-		float x = static_cast<float>(SCREEN_WIDTH) / 2.0f - BUTTON_WIDTH / 2.0f;
-		float y = static_cast<float>(SCREEN_HEIGHT) - BUTTON_HEIGHT - BUTTON_MARGIN_BOTTOM;
-
-		buttonBack = Button::Create(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, buttonName);
-	}
-
-	static void UpdateButton()
-	{
-		Button::Update(buttonBack);
-
-		if (buttonBack.clicked)
-		{
-			CosmicJump::currentScene = CosmicJump::Scenes::MainMenu;
-		}
-	}
-
-	static void DrawButton()
-	{
-		Button::Draw(buttonBack);
 	}
 }
