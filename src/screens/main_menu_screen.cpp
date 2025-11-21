@@ -21,6 +21,14 @@ namespace MainMenu
 	static Button::Button buttons[MAX_BUTTONS];
 	static const std::string buttonNames[MAX_BUTTONS] = { "Play", "2 Players", "Credits","Exit" };
 
+	static Button::Button buttonMute;
+	static const std::string buttonMuteName = "Mute";
+	static bool isMuted;
+
+	static const float MUTE_BTN_WIDTH = 115.0f;
+	static const float MUTE_BTN_HEIGHT = 60.0f;
+	static const float MUTE_BTN_MARGIN = 10.0f;
+
 	static Sound menu;
 	static Sound gameplay;
 	static Sound click;
@@ -60,6 +68,9 @@ namespace MainMenu
 		InitLogo();
 		InitButtons();
 		InitSound();
+
+		isMuted = false;
+		SetMasterVolume(1.0f);
 	}
 
 	void Input()
@@ -125,6 +136,10 @@ namespace MainMenu
 
 			buttons[i] = Button::Create(buttonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT, buttonNames[i]);
 		}
+
+		float muteX = static_cast<float>(SCREEN_WIDTH) - MUTE_BTN_WIDTH - MUTE_BTN_MARGIN;
+		float muteY = MUTE_BTN_MARGIN;
+		buttonMute = Button::Create(muteX, muteY, MUTE_BTN_WIDTH, MUTE_BTN_HEIGHT, buttonMuteName);
 	}
 
 	static void InitBackground()
@@ -148,6 +163,8 @@ namespace MainMenu
 		{
 			Button::Draw(buttons[i]);
 		}
+
+		Button::Draw(buttonMute);
 	}
 
 	static void DrawBackground()
@@ -177,6 +194,24 @@ namespace MainMenu
 		for (int i = 0; i < MAX_BUTTONS; i++)
 		{
 			Button::Update(buttons[i]);
+		}
+
+		Button::Update(buttonMute);
+
+		if (buttonMute.clicked)
+		{
+			isMuted = !isMuted;
+
+			if (isMuted)
+			{
+				SetSoundVolume(menu, 0.0f);
+				buttonMute.text = "Unmute";
+			}
+			else
+			{
+				SetSoundVolume(menu, 1.0f);
+				buttonMute.text = "Mute";
+			}
 		}
 
 		if (buttons[Play].clicked)

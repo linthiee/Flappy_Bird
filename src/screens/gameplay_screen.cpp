@@ -38,13 +38,24 @@ namespace Gameplay
 	static const float BUTTON_HEIGHT = 60.0f;
 	static const float BUTTON_MARGIN = 10.0f;
 
-	static const std::string TEXT_CONTROLS = "Controls: SPACE to jump";
-	static const std::string TEXT_START_GAME = "Press SPACE to jump and start the game";
-	static const std::string TEXT_JUMP = "Second player is the RED raven. press UP ARROW KEY to jump";
+	static const std::string TEXT_START_GAME = "Press SPACE to Start";
+
+	static const std::string TEXT_P1_LABEL = "Player 1: ";
+	static const std::string TEXT_P1_ACTION = "SPACE to Jump";
+
+	static const std::string TEXT_P2_PART1 = "Player 2 (";
+	static const std::string TEXT_P2_COLOR = "RED Raven";
+	static const std::string TEXT_P2_PART2 = "): UP ARROW to Jump";
+
 	static const std::string TEXT_PAUSE = "Game Paused";
 
+	static const std::string TEXT_GAME_OVER = "GAME OVER";
+	static const std::string TEXT_RESTART = "Press SPACE to restart";
+	static const char* TEXT_SCORE_PREFIX = "Score: %i";
+	static const char* TEXT_HIGHSCORE_PREFIX = "High Score: %i";
+
 	static const int TUTORIAL_FONT_SIZE = 36;
-	static const int TUTORIAL_TEXT_SPACING = 90;
+	static const int TUTORIAL_TEXT_SPACING = 60; 
 
 	static const Color TUTORIAL_BACKGROUND = { 0, 0, 0, 150 };
 
@@ -58,15 +69,21 @@ namespace Gameplay
 	static bool isGamePaused;
 	static bool isMuted;
 
+	static bool isGameOver;
+	static int highScore = 0;
+	static int lastScore = 0;
+
 	static void InitButton();
 	static void InitSound();
 	static void UpdateButton(bool& isPaused);
 	static void DrawButton(bool isPaused);
 	static void DrawTutorial();
+	static void DrawGameOver();
 	static void HandleCollisionBetweenPlayerAndObstacle(Player::Player player);
 	static void HandlePlayerFloorCollision(Player::Player player);
 	static void DrawScore(int score);
 	static void Reset();
+	static void TriggerGameOver();
 
 	void Init()
 	{
@@ -82,6 +99,7 @@ namespace Gameplay
 		deltaTime = GetFrameTime();
 		isGameStarted = false;
 		isGamePaused = false;
+		isGameOver = false;
 
 		isMuted = false;
 		SetMasterVolume(1.0f);
@@ -89,13 +107,24 @@ namespace Gameplay
 
 	void Input()
 	{
-		if (IsKeyPressed(KEY_ESCAPE))
+		if (IsKeyPressed(KEY_ESCAPE) && !isGameOver)
 		{
 			isGamePaused = !isGamePaused;
 		}
 
 		if (isGamePaused)
 		{
+			return;
+		}
+
+		if (isGameOver)
+		{
+			if (IsKeyPressed(KEY_SPACE))
+			{
+				Reset(); 
+				isGameOver = false;
+				isGameStarted = false;
+			}
 			return;
 		}
 
@@ -129,7 +158,7 @@ namespace Gameplay
 
 		UpdateButton(isGamePaused);
 
-		if (isGameStarted && !isGamePaused)
+		if (isGameStarted && !isGamePaused && !isGameOver)
 		{
 			Background::Update(deltaTime);
 
@@ -192,11 +221,20 @@ namespace Gameplay
 		}
 
 		Obstacle::Draw(obstacle);
-		DrawScore(player.score);
 
-		if (!isGameStarted)
+		if (!isGameOver)
+		{
+			DrawScore(player.score);
+		}
+
+		if (!isGameStarted && !isGameOver)
 		{
 			DrawTutorial();
+		}
+
+		if (isGameOver)
+		{
+			DrawGameOver();
 		}
 
 		if (isGamePaused)
@@ -277,13 +315,13 @@ namespace Gameplay
 
 			if (isMuted)
 			{
-				SetMasterVolume(0.0f); 
-				buttonMute.text = "Unmute"; 
+				SetMasterVolume(0.0f);
+				buttonMute.text = "Unmute";
 			}
 			else
 			{
-				SetMasterVolume(1.0f); 
-				buttonMute.text = "Mute"; 
+				SetMasterVolume(1.0f);
+				buttonMute.text = "Mute";
 			}
 		}
 	}
@@ -303,29 +341,87 @@ namespace Gameplay
 
 	static void DrawTutorial()
 	{
-		int textControlsWidth = MeasureText(TEXT_CONTROLS.c_str(), TUTORIAL_FONT_SIZE);
-		int textJumpWidth = MeasureText(TEXT_JUMP.c_str(), TUTORIAL_FONT_SIZE);
-		int textStartGameWidth = MeasureText(TEXT_START_GAME.c_str(), TUTORIAL_FONT_SIZE);
+		int textStartWidth = MeasureText(TEXT_START_GAME.c_str(), TUTORIAL_FONT_SIZE);
 
-		int textControlsX = (SCREEN_WIDTH - textControlsWidth) / 2;
-		int textStartGameX = (SCREEN_WIDTH - textStartGameWidth) / 2;
-		int textJumpX = (SCREEN_WIDTH - textJumpWidth) / 2;
+		std::string p1FullText = TEXT_P1_LABEL + TEXT_P1_ACTION;
+		int textP1Width = MeasureText(p1FullText.c_str(), TUTORIAL_FONT_SIZE);
+
+		int p2Part1Width = MeasureText(TEXT_P2_PART1.c_str(), TUTORIAL_FONT_SIZE);
+		int p2ColorWidth = MeasureText(TEXT_P2_COLOR.c_str(), TUTORIAL_FONT_SIZE);
+		int p2Part2Width = MeasureText(TEXT_P2_PART2.c_str(), TUTORIAL_FONT_SIZE);
+		int p2TotalWidth = p2Part1Width + p2ColorWidth + p2Part2Width;
+
+		int textStartX = (SCREEN_WIDTH - textStartWidth) / 2;
+		int textP1X = (SCREEN_WIDTH - textP1Width) / 2;
+		int textP2X = (SCREEN_WIDTH - p2TotalWidth) / 2;
 
 		int totalBlockHeight = TUTORIAL_FONT_SIZE + TUTORIAL_TEXT_SPACING + TUTORIAL_FONT_SIZE;
+		if (player2.isActive)
+		{
+			totalBlockHeight += (TUTORIAL_TEXT_SPACING + TUTORIAL_FONT_SIZE);
+		}
 
-		int blockTopY = (SCREEN_HEIGHT - totalBlockHeight) / 2;
-
-		int textControlsY = blockTopY;
-		int textStartGameY = textControlsY + TUTORIAL_FONT_SIZE + TUTORIAL_TEXT_SPACING;
-		int textJumpY = textControlsY + 50 + TUTORIAL_FONT_SIZE + TUTORIAL_TEXT_SPACING;
+		int startY = (SCREEN_HEIGHT - totalBlockHeight) / 2;
+		int p1Y = startY + TUTORIAL_FONT_SIZE + TUTORIAL_TEXT_SPACING;
+		int p2Y = p1Y + TUTORIAL_FONT_SIZE + TUTORIAL_TEXT_SPACING;
 
 		DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, TUTORIAL_BACKGROUND);
-		DrawText(TEXT_CONTROLS.c_str(), textControlsX, textControlsY, TUTORIAL_FONT_SIZE, WHITE);
-		DrawText(TEXT_START_GAME.c_str(), textStartGameX, textStartGameY, TUTORIAL_FONT_SIZE, WHITE);
+
+		DrawText(TEXT_START_GAME.c_str(), textStartX, startY, TUTORIAL_FONT_SIZE, WHITE);
+
+		DrawText(p1FullText.c_str(), textP1X, p1Y, TUTORIAL_FONT_SIZE, WHITE);
 
 		if (player2.isActive)
 		{
-			DrawText(TEXT_JUMP.c_str(), textJumpX, textJumpY, TUTORIAL_FONT_SIZE, WHITE);
+			DrawText(TEXT_P2_PART1.c_str(), textP2X, p2Y, TUTORIAL_FONT_SIZE, WHITE);
+
+			DrawText(TEXT_P2_COLOR.c_str(), textP2X + p2Part1Width, p2Y, TUTORIAL_FONT_SIZE, SECOND_PLAYER_COLOR);
+
+			DrawText(TEXT_P2_PART2.c_str(), textP2X + p2Part1Width + p2ColorWidth, p2Y, TUTORIAL_FONT_SIZE, WHITE);
+		}
+	}
+
+	static void DrawGameOver()
+	{
+		DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, TUTORIAL_BACKGROUND);
+
+		int fontSize = 50;
+		int smallFontSize = 30;
+
+		const char* scoreText = TextFormat(TEXT_SCORE_PREFIX, lastScore);
+		const char* highScoreText = TextFormat(TEXT_HIGHSCORE_PREFIX, highScore);
+
+		int gameOverWidth = MeasureText(TEXT_GAME_OVER.c_str(), fontSize);
+		int scoreWidth = MeasureText(scoreText, fontSize);
+		int highScoreWidth = MeasureText(highScoreText, fontSize);
+		int restartWidth = MeasureText(TEXT_RESTART.c_str(), smallFontSize);
+
+		int centerX = SCREEN_WIDTH / 2;
+		int centerY = SCREEN_HEIGHT / 2;
+
+		int gameOverX = centerX - gameOverWidth / 2;
+		int scoreX = centerX - scoreWidth / 2;
+		int highScoreX = centerX - highScoreWidth / 2;
+		int restartX = centerX - restartWidth / 2;
+
+		DrawText(TEXT_GAME_OVER.c_str(), gameOverX, centerY - 120, fontSize, RED);
+
+		DrawText(scoreText, scoreX, centerY - 40, fontSize, WHITE);
+		DrawText(highScoreText, highScoreX, centerY + 20, fontSize, GOLD);
+
+		DrawText(TEXT_RESTART.c_str(), restartX, centerY + 100, smallFontSize, LIGHTGRAY);
+	}
+
+	static void TriggerGameOver()
+	{
+		isGameOver = true;
+		isGameStarted = false;
+
+		lastScore = player.score;
+
+		if (lastScore > highScore)
+		{
+			highScore = lastScore;
 		}
 	}
 
@@ -334,8 +430,7 @@ namespace Gameplay
 		if (CheckCollisionRectangle(currentPlayer.rectangle, obstacle.rectangleTop) ||
 			CheckCollisionRectangle(currentPlayer.rectangle, obstacle.rectangleBottom))
 		{
-			Reset();
-			isGameStarted = false;
+			TriggerGameOver();
 			COLLISION = true;
 		}
 	}
@@ -344,8 +439,7 @@ namespace Gameplay
 	{
 		if (currentPlayer.rectangle.y + currentPlayer.rectangle.height >= SCREEN_HEIGHT)
 		{
-			Reset();
-			isGameStarted = false;
+			TriggerGameOver();
 			OUT_OF_BONDS = true;
 		}
 	}
