@@ -34,7 +34,6 @@ namespace Obstacle
 		Move(obstacle, deltaTime);
 		Recycle(obstacle);
 	}
-
 	void Draw(Obstacle obstacle)
 	{
 		Texture2D currentTexture;

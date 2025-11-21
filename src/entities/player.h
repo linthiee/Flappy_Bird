@@ -7,12 +7,10 @@ namespace Player
 {
 	struct Player
 	{
-		Texture texture;
 		Geometry::Rectangle rectangle;
 		float speedX;
 		float speedY;
 		bool isActive;
-		float rotation;
 	};
 
 	void Update(Player& player, float deltaTime);
@@ -21,6 +19,4 @@ namespace Player
 	Player Create(float posX, float posY);
 	void Reset(Player& player, float posX, float posY);
 	void Jump(Player& player);
-
-	void Close();
 }

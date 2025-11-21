@@ -18,8 +18,6 @@ namespace Gameplay
 	static Player::Player player;
 	static Player::Player player2;
 
-	static Color SECOND_PLAYER = { 230, 101, 115, 255 };
-
 	static Obstacle::Obstacle obstacle;
 
 	static Button::Button button;
@@ -132,11 +130,11 @@ namespace Gameplay
 		Background::Draw();
 		Background::KrakenEye::Draw(playerCenter, deltaTime); 
 
-		Player::Draw(player, WHITE);
+		Player::Draw(player, GREEN);
 
 		if (player2.isActive)
 		{
-			Player::Draw(player2, SECOND_PLAYER);
+			Player::Draw(player2, MAGENTA);
 		}
 
 		Obstacle::Draw(obstacle);
@@ -154,7 +152,6 @@ namespace Gameplay
 	void Close()
 	{
 		Obstacle::Close();
-		Player::Close();
 	}
 
 	static void InitButton()

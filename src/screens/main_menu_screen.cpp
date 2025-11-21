@@ -13,8 +13,6 @@ using namespace UIConstants;
 
 namespace MainMenu
 {
-	static Texture logoTexture;
-
 	static Geometry::Rectangle logo;
 
 	static const int MAX_BUTTONS = 4;
@@ -29,35 +27,23 @@ namespace MainMenu
 		Exit,
 	};
 
-	struct Background
-	{
-		float x;
-		float y;
-		float speed;
-		Texture texture;
-	};
-
-	static Background background;
-
 	static void InitLogo();
 	static void InitButtons();
-	static void InitBackground();
 	static void UpdateButtons();
 	static void DrawLogo();
 	static void DrawButtons();
-	static void DrawBackground();
 	static void DrawVersion();
 	static float GetTotalMenuHeight();
 
 	void Init()
 	{
-		InitBackground();
 		InitLogo();
 		InitButtons();
 	}
 
 	void Input()
 	{
+
 	}
 
 	void Update()
@@ -70,7 +56,6 @@ namespace MainMenu
 		ClearBackground(BLACK);
 		BeginDrawing();
 
-		DrawBackground();
 		DrawLogo();
 		DrawButtons();
 		DrawVersion();
@@ -80,8 +65,7 @@ namespace MainMenu
 
 	void Close()
 	{
-		UnloadTexture(background.texture);
-		UnloadTexture(logoTexture);
+
 	}
 
 	static void InitLogo()
@@ -93,8 +77,6 @@ namespace MainMenu
 		logo.y = logoStartY;
 		logo.width = LOGO_WIDTH;
 		logo.height = LOGO_HEIGHT;
-
-		logoTexture = LoadTexture("res/textures/logo/cosmic_jump.png");
 	}
 
 	static void InitButtons()
@@ -113,19 +95,14 @@ namespace MainMenu
 		}
 	}
 
-	static void InitBackground()
-	{
-		background.texture = LoadTexture("res/textures/backgrounds/gameplay/back.png");
-		background.x = 0.0f;
-		background.y = 0.0f;
-	}
-
 	static void DrawLogo()
 	{
 		int x = static_cast<int>(logo.x);
 		int y = static_cast<int>(logo.y);
+		int width = static_cast<int>(logo.width);
+		int height = static_cast<int>(logo.height);
 
-		DrawTextureEx(logoTexture, { static_cast<float>(x), static_cast<float>(y) }, 0.0f, 0.4f, WHITE);
+		DrawRectangle(x, y, width, height, WHITE);
 	}
 
 	static void DrawButtons()
@@ -134,11 +111,6 @@ namespace MainMenu
 		{
 			Button::Draw(buttons[i]);
 		}
-	}
-
-	static void DrawBackground()
-	{
-		DrawTexture(background.texture, static_cast<int>(background.x), static_cast<int>(background.y), WHITE);
 	}
 
 	static void UpdateButtons()
