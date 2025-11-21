@@ -26,23 +26,8 @@ Player 1 (White Raven)
 
 Player 2 (Red Raven)
 
-Jump / Fly
-
-SPACE
-
-UP ARROW
-
-Pause Game
-
-ESCAPE
-
--
-
-Select Menu
-
-MOUSE LEFT CLICK
-
--
+Jump / Fly SPACE | UP ARROW
+Pause Game | ESCAPE
 
 Technologies Used
 
