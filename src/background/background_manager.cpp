@@ -13,6 +13,7 @@ namespace Background
 	static const float PARALLAX_SPEED_BACK = 45.0f;
 	static const float PARALLAX_SPEED_MID = 145.0f;
 	static const float PARALLAX_SPEED_FRONT = 360.0f;
+	static const float PARALLAX_SPEED_GARBAGE = 400.0f;
 
 	const Vector2 EYE_CENTER_POSITION = { 1110.0f, 270.0f };
 
@@ -33,6 +34,7 @@ namespace Background
 	static Background gameplayFront;
 	static Background gameplayFront2;
 
+	static Background garbage;
 	static Background pupil;
 
 	static float backgroundScale;
@@ -63,6 +65,7 @@ namespace Background
 		UnloadTexture(gameplayMid.texture);
 		UnloadTexture(gameplayFront.texture);
 		UnloadTexture(gameplayFront2.texture);
+		UnloadTexture(garbage.texture);
 	}
 
 	static void InitBackground()
@@ -71,6 +74,7 @@ namespace Background
 		gameplayMid.texture = LoadTexture("res/textures/backgrounds/gameplay/mid.png");
 		gameplayFront.texture = LoadTexture("res/textures/backgrounds/gameplay/front.png");
 		gameplayFront2.texture = LoadTexture("res/textures/backgrounds/gameplay/front2.png");
+		garbage.texture = LoadTexture("res/textures/backgrounds/gameplay/garbage.png");
 		pupil.texture = LoadTexture("res/textures/backgrounds/gameplay/pupil.png");
 
 		gameplayBack.x = 0.0f;
@@ -84,6 +88,10 @@ namespace Background
 		gameplayFront.x = 0.0f;
 		gameplayFront.y = 0.0f;
 		gameplayFront.speed = PARALLAX_SPEED_FRONT;
+
+		garbage.x = 0.0f;
+		garbage.y = 400.0f;
+		garbage.speed = PARALLAX_SPEED_GARBAGE;
 
 		gameplayFront2.x = 0.0f;
 		gameplayFront2.y = 0.0f;
@@ -99,16 +107,17 @@ namespace Background
 		gameplayMid.x -= gameplayMid.speed * deltaTime;
 		gameplayFront.x -= gameplayFront.speed * deltaTime;
 		gameplayFront2.x -= gameplayFront.speed * deltaTime;
+		garbage.x -= garbage.speed * deltaTime;
 
 		if (gameplayBack.x <= -limit)
 		{
 			gameplayBack.x += limit;
 		}
 
-		//if (gameplayMid.x <= -limit)
-		//{
-		//	gameplayMid.x += limit;
-		//}
+		if (garbage.x <= -limit)
+		{
+			garbage.x += limit;
+		}
 
 		if (gameplayFront.x <= -limit)
 		{
@@ -135,17 +144,24 @@ namespace Background
 		Vector2 front2PosOne = { gameplayFront2.x, gameplayFront2.y };
 		Vector2 front2PosTwo = { gameplayFront2.x + limit, gameplayFront2.y };
 
+		Vector2 garbagePosOne = { garbage.x, garbage.y };
+		Vector2 garbagePosTwo = { garbage.x + limit, garbage.y };
+
 		DrawTextureEx(gameplayBack.texture, backPosOne, 0.0f, backgroundScale, WHITE);
 		DrawTextureEx(gameplayBack.texture, backPosTwo, 0.0f, backgroundScale, WHITE);
 
 		DrawTextureEx(gameplayMid.texture, { 50.0f, 0.0f }, 0.0f, backgroundScale, WHITE);
 		//DrawTextureEx(gameplayMid.texture, midPosTwo, 0.0f, backgroundScale, WHITE);
 
+		DrawTextureEx(garbage.texture, garbagePosOne, 0.0f, backgroundScale, WHITE);
+		DrawTextureEx(garbage.texture, garbagePosTwo, 0.0f, backgroundScale, WHITE);
+
 		DrawTextureEx(gameplayFront.texture, frontPosOne, 0.0f, backgroundScale, WHITE);
 		DrawTextureEx(gameplayFront.texture, frontPosTwo, 0.0f, backgroundScale, WHITE);
 
 		DrawTextureEx(gameplayFront2.texture, front2PosOne, 0.0f, backgroundScale, WHITE);
 		DrawTextureEx(gameplayFront2.texture, front2PosTwo, 0.0f, backgroundScale, WHITE);
+
 	}
 
 	void KrakenEye::Draw(Vector2 playerPosition, float deltaTime)
