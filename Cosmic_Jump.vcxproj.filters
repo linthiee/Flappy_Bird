@@ -32,6 +32,9 @@
     <ClCompile Include="src\background\background_manager.cpp">
       <Filter>Background</Filter>
     </ClCompile>
+    <ClCompile Include="game_constants.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Game">

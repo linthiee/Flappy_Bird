@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="game_constants.cpp" />
     <ClCompile Include="src\background\background_manager.cpp" />
     <ClCompile Include="src\collision\collision_manager.cpp" />
     <ClCompile Include="src\entities\obstacle.cpp" />

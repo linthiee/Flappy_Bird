@@ -11,6 +11,8 @@ namespace Player
 	static Texture playerDownTexture;
 	static Texture playerUpTexture;
 
+	static Sound flap;
+
 	static const float DEFAULT_WIDTH = 75.0f;
 	static const float DEFAULT_HEIGHT = 37.5f;
 
@@ -23,6 +25,7 @@ namespace Player
 	const float JUMP_STRENGTH = -650.0f;
 
 	static void InitTexture();
+	static void InitSound();
 
 	static void UpdateGravity(Player& player, float deltaTime);
 	static void LimitWithBorders(Player& player);
@@ -31,9 +34,16 @@ namespace Player
 	{
 		UpdateGravity(player, deltaTime);
 
+		FLAPPED = false;
+
 		if (player.speedY < 0.0f)
 		{
 			player.texture = playerDownTexture;
+
+			if (!IsSoundPlaying(flap))
+			{
+				PlaySound(flap);
+			}
 		}
 		else
 		{
@@ -70,6 +80,7 @@ namespace Player
 		newPlayer.score = 0;
 
 		InitTexture();
+		InitSound();
 
 		return newPlayer;
 	}
@@ -85,12 +96,24 @@ namespace Player
 	void Jump(Player& player)
 	{
 		player.speedY = JUMP_STRENGTH;
+
+		if (!FLAPPED)
+		{
+			FLAPPED = true;
+			SetSoundVolume(flap, 0.2f);
+			PlaySound(flap);
+		}
 	}
 
-	void InitTexture()
+	static void InitTexture()
 	{
 		playerUpTexture = LoadTexture("res/textures/player/raven_up.png");
 		playerDownTexture = LoadTexture("res/textures/player/raven_down.png");
+	}
+
+	static void InitSound()
+	{
+		flap = LoadSound("res/sound/gameplay/flap.wav");
 	}
 
 	static void UpdateGravity(Player& player, float deltaTime)

@@ -21,6 +21,10 @@ namespace MainMenu
 	static Button::Button buttons[MAX_BUTTONS];
 	static const std::string buttonNames[MAX_BUTTONS] = { "Play", "2 Players", "Credits","Exit" };
 
+	static Sound menu;
+	static Sound gameplay;
+	static Sound click;
+
 	enum ButtonID
 	{
 		Play,
@@ -42,6 +46,7 @@ namespace MainMenu
 	static void InitLogo();
 	static void InitButtons();
 	static void InitBackground();
+	static void InitSound();
 	static void UpdateButtons();
 	static void DrawLogo();
 	static void DrawButtons();
@@ -54,6 +59,7 @@ namespace MainMenu
 		InitBackground();
 		InitLogo();
 		InitButtons();
+		InitSound();
 	}
 
 	void Input()
@@ -62,6 +68,14 @@ namespace MainMenu
 
 	void Update()
 	{
+		if (!IsSoundPlaying(menu))
+		{
+			if (IsSoundPlaying(gameplay))
+			{
+				StopSound(gameplay);
+			}
+			PlaySound(menu);
+		}
 		UpdateButtons();
 	}
 
@@ -141,8 +155,25 @@ namespace MainMenu
 		DrawTexture(background.texture, static_cast<int>(background.x), static_cast<int>(background.y), WHITE);
 	}
 
+	static void InitSound()
+	{
+		if (!IsAudioDeviceReady())
+		{
+			InitAudioDevice();
+		}
+
+		menu = LoadSound("res/sound/menu/menu_sound.wav");
+		gameplay = LoadSound("res/sound/gameplay/gameplay_sound.wav");
+		click = LoadSound("res/sound/menu/click.wav");
+	}
+
 	static void UpdateButtons()
 	{
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+		{
+			PlaySound(click);
+		}
+
 		for (int i = 0; i < MAX_BUTTONS; i++)
 		{
 			Button::Update(buttons[i]);
@@ -150,6 +181,12 @@ namespace MainMenu
 
 		if (buttons[Play].clicked)
 		{
+			if (IsSoundPlaying(menu))
+			{
+				StopSound(menu);
+				SetSoundVolume(gameplay, 0.3f);
+				PlaySound(gameplay);
+			}
 			Gameplay::secondPlayer::Disable();
 			CosmicJump::currentScene = CosmicJump::Scenes::Gameplay;
 			Gameplay::Init();
@@ -162,6 +199,12 @@ namespace MainMenu
 
 		if (buttons[Multiplayer].clicked)
 		{
+			if (IsSoundPlaying(menu))
+			{
+				StopSound(menu);
+				SetSoundVolume(gameplay, 0.3f);
+				PlaySound(gameplay);
+			}
 			Gameplay::Init();
 			Gameplay::secondPlayer::Enable();
 			CosmicJump::currentScene = CosmicJump::Scenes::Gameplay;

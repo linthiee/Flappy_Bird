@@ -48,11 +48,17 @@ namespace Gameplay
 
 	static const Color TUTORIAL_BACKGROUND = { 0, 0, 0, 150 };
 
+	static Sound scoreSound;
+	static Sound click;
+	static Sound collision;
+	static Sound outOfBonds;
+
 	static float deltaTime;
 	static bool isGameStarted;
 	static bool isGamePaused;
 
 	static void InitButton();
+	static void InitSound();
 	static void UpdateButton(bool& isPaused);
 	static void DrawButton(bool isPaused);
 	static void DrawTutorial();
@@ -70,6 +76,7 @@ namespace Gameplay
 		obstacle = Obstacle::Create();
 
 		InitButton();
+		InitSound();
 
 		deltaTime = GetFrameTime();
 		isGameStarted = false;
@@ -111,6 +118,11 @@ namespace Gameplay
 	{
 		deltaTime = GetFrameTime();
 
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+		{
+			PlaySound(click);
+		}
+
 		UpdateButton(isGamePaused);
 
 		if (isGameStarted && !isGamePaused)
@@ -129,7 +141,7 @@ namespace Gameplay
 			if (Obstacle::CheckForScore(obstacle, player.rectangle.x))
 			{
 				player.score++;
-				//PlaySound(scoreSound);
+				PlaySound(scoreSound);
 			}
 
 			HandleCollisionBetweenPlayerAndObstacle(player);
@@ -142,6 +154,18 @@ namespace Gameplay
 			if (player2.isActive)
 			{
 				HandlePlayerFloorCollision(player2);
+			}
+
+			if (COLLISION)
+			{
+				PlaySound(collision);
+				COLLISION = false;
+			}
+
+			if (OUT_OF_BONDS)
+			{
+				PlaySound(outOfBonds);
+				OUT_OF_BONDS = false;
 			}
 		}
 	}
@@ -203,6 +227,14 @@ namespace Gameplay
 		buttonMenu = Button::Create((SCREEN_WIDTH / 2) - 60, (SCREEN_HEIGHT / 2) + 100, BUTTON_WIDTH + 60, BUTTON_HEIGHT, buttonMenuName);
 		buttonExit = Button::Create((SCREEN_WIDTH / 2) - 60, (SCREEN_HEIGHT / 2) + 170, BUTTON_WIDTH + 60, BUTTON_HEIGHT, buttonExitName);
 		buttonMute = Button::Create(x - 100, y, BUTTON_WIDTH + 30, BUTTON_HEIGHT, buttonMuteName);
+	}
+
+	void InitSound()
+	{
+		scoreSound = LoadSound("res/sound/gameplay/scored.wav");
+		click = LoadSound("res/sound/menu/click.wav");
+		collision = LoadSound("res/sound/gameplay/death.wav");
+		outOfBonds = LoadSound("res/sound/gameplay/outofbonds.wav");
 	}
 
 	static void UpdateButton(bool& isPaused)
@@ -289,6 +321,7 @@ namespace Gameplay
 		{
 			Reset();
 			isGameStarted = false;
+			COLLISION = true;
 		}
 	}
 
@@ -298,6 +331,7 @@ namespace Gameplay
 		{
 			Reset();
 			isGameStarted = false;
+			OUT_OF_BONDS = true;
 		}
 	}
 

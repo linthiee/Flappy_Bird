@@ -4,9 +4,9 @@
 
 namespace Button
 {
-    static Color normalColor = { 100, 80, 130, 255 };
-    static Color hoverColor = { 135, 95, 175, 255 };
-    static Color pressedColor = { 80, 65, 100, 255 };
+    static Color normalColor = DARKBROWN;
+    static Color hoverColor = { 70, 57, 41, 255 };
+    static Color pressedColor = { 90, 77, 61, 255 };
 
     static int BUTTON_TEXT_SIZE = 36;
 
