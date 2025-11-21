@@ -1,16 +1,28 @@
 #include "player.h"
 
+#include "raymath.h"
+
 #include "game/game_constants.h"
 
 using namespace Game;
 
 namespace Player
 {
+	static Texture playerDownTexture;
+	static Texture playerUpTexture;
+
 	static const float DEFAULT_WIDTH = 75.0f;
-	static const float DEFAULT_HEIGHT = 75.0f;
+	static const float DEFAULT_HEIGHT = 37.5f;
+
+	static const float MAX_ROTATION_ANGLE = 180.0f;
+
+	static float MIN_ROTATION_SPEED = -50;
+	static float MAX_ROTATION_SPEED = -MIN_ROTATION_SPEED;
 
 	static const float GRAVITY = 1800.0f;
 	const float JUMP_STRENGTH = -650.0f;
+
+	static void InitTexture();
 
 	static void UpdateGravity(Player& player, float deltaTime);
 	static void LimitWithBorders(Player& player);
@@ -19,6 +31,17 @@ namespace Player
 	{
 		UpdateGravity(player, deltaTime);
 
+		if (player.speedY < 0.0f)
+		{
+			player.texture = playerDownTexture;
+		}
+		else
+		{
+			player.texture = playerUpTexture;
+		}
+
+		player.rotation = Lerp(0, MAX_ROTATION_ANGLE * DEG2RAD, Normalize(player.speedY, MIN_ROTATION_SPEED, MAX_ROTATION_SPEED));
+
 		player.rectangle.y += player.speedY * deltaTime;
 
 		LimitWithBorders(player);
@@ -26,12 +49,10 @@ namespace Player
 
 	void Draw(Player player, Color color)
 	{
-		int x = static_cast<int>(player.rectangle.x);
-		int y = static_cast<int>(player.rectangle.y);
-		int width = static_cast<int>(player.rectangle.width);
-		int height = static_cast<int>(player.rectangle.height);
+		float x = player.rectangle.x;
+		float y = player.rectangle.y - (player.rectangle.height);
 
-		DrawRectangle(x, y, width, height, color);
+		DrawTextureEx(player.texture, { x, y }, player.rotation, 0.05f, color);
 	}
 
 	Player Create(float posX, float posY)
@@ -45,6 +66,9 @@ namespace Player
 		newPlayer.speedX = 0.0f;
 		newPlayer.speedY = 0.0f;
 		newPlayer.isActive = true;
+		newPlayer.rotation = 0.0f;
+
+		InitTexture();
 
 		return newPlayer;
 	}
@@ -59,6 +83,12 @@ namespace Player
 	void Jump(Player& player)
 	{
 		player.speedY = JUMP_STRENGTH;
+	}
+
+	void InitTexture()
+	{
+		playerUpTexture = LoadTexture("res/textures/player/raven_up.png");
+		playerDownTexture = LoadTexture("res/textures/player/raven_down.png");
 	}
 
 	static void UpdateGravity(Player& player, float deltaTime)
@@ -79,5 +109,11 @@ namespace Player
 			player.rectangle.y = SCREEN_HEIGHT - DEFAULT_HEIGHT;
 			player.speedY = 0.0f;
 		}
+	}
+
+	void Close()
+	{
+		UnloadTexture(playerUpTexture);
+		UnloadTexture(playerDownTexture);
 	}
 }
