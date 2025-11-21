@@ -56,6 +56,7 @@ namespace Gameplay
 	static float deltaTime;
 	static bool isGameStarted;
 	static bool isGamePaused;
+	static bool isMuted;
 
 	static void InitButton();
 	static void InitSound();
@@ -81,6 +82,9 @@ namespace Gameplay
 		deltaTime = GetFrameTime();
 		isGameStarted = false;
 		isGamePaused = false;
+
+		isMuted = false;
+		SetMasterVolume(1.0f);
 	}
 
 	void Input()
@@ -226,7 +230,7 @@ namespace Gameplay
 		buttonResume = Button::Create((SCREEN_WIDTH / 2) - 60, (SCREEN_HEIGHT / 2) + 30, BUTTON_WIDTH + 60, BUTTON_HEIGHT, buttonResumeName);
 		buttonMenu = Button::Create((SCREEN_WIDTH / 2) - 60, (SCREEN_HEIGHT / 2) + 100, BUTTON_WIDTH + 60, BUTTON_HEIGHT, buttonMenuName);
 		buttonExit = Button::Create((SCREEN_WIDTH / 2) - 60, (SCREEN_HEIGHT / 2) + 170, BUTTON_WIDTH + 60, BUTTON_HEIGHT, buttonExitName);
-		buttonMute = Button::Create(x - 100, y, BUTTON_WIDTH + 30, BUTTON_HEIGHT, buttonMuteName);
+		buttonMute = Button::Create(x - 120, y, BUTTON_WIDTH + 55, BUTTON_HEIGHT, buttonMuteName);
 	}
 
 	void InitSound()
@@ -269,7 +273,18 @@ namespace Gameplay
 
 		if (buttonMute.clicked)
 		{
-			// mute
+			isMuted = !isMuted;
+
+			if (isMuted)
+			{
+				SetMasterVolume(0.0f); 
+				buttonMute.text = "Unmute"; 
+			}
+			else
+			{
+				SetMasterVolume(1.0f); 
+				buttonMute.text = "Mute"; 
+			}
 		}
 	}
 
@@ -343,7 +358,7 @@ namespace Gameplay
 
 		int textWidth = MeasureText(scoreText, fontSize);
 
-		int x =	SCREEN_WIDTH / 2 - textWidth / 2;
+		int x = SCREEN_WIDTH / 2 - textWidth / 2;
 		int y = 50;
 
 		DrawText(scoreText, x + 3, y + 3, fontSize, BLACK);
