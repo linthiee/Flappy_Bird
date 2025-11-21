@@ -161,7 +161,6 @@ namespace Background
 
 		DrawTextureEx(gameplayFront2.texture, front2PosOne, 0.0f, backgroundScale, WHITE);
 		DrawTextureEx(gameplayFront2.texture, front2PosTwo, 0.0f, backgroundScale, WHITE);
-
 	}
 
 	void KrakenEye::Draw(Vector2 playerPosition, float deltaTime)

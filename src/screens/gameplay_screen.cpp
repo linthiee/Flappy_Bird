@@ -22,8 +22,17 @@ namespace Gameplay
 
 	static Obstacle::Obstacle obstacle;
 
-	static Button::Button button;
-	static const std::string buttonName = " | | ";
+	static Button::Button buttonPause;
+	static Button::Button buttonResume;
+	static Button::Button buttonMenu;
+	static Button::Button buttonExit;
+	static Button::Button buttonMute;
+
+	static const std::string buttonPauseName = " | | ";
+	static const std::string buttonResumeName = " Resume ";
+	static const std::string buttonMenuName = " Menu ";
+	static const std::string buttonExitName = " Exit ";
+	static const std::string buttonMuteName = "Mute";
 
 	static const float BUTTON_WIDTH = 60.0f;
 	static const float BUTTON_HEIGHT = 60.0f;
@@ -32,6 +41,7 @@ namespace Gameplay
 	static const std::string TEXT_CONTROLS = "Controls: SPACE to jump";
 	static const std::string TEXT_START_GAME = "Press SPACE to jump and start the game";
 	static const std::string TEXT_JUMP = "Second player press UP ARROW KEY to jump";
+	static const std::string TEXT_PAUSE = "Game Paused";
 
 	static const int TUTORIAL_FONT_SIZE = 36;
 	static const int TUTORIAL_TEXT_SPACING = 90;
@@ -40,10 +50,11 @@ namespace Gameplay
 
 	static float deltaTime;
 	static bool isGameStarted;
+	static bool isGamePaused;
 
 	static void InitButton();
-	static void UpdateButton();
-	static void DrawButton();
+	static void UpdateButton(bool& isPaused);
+	static void DrawButton(bool isPaused);
 	static void DrawTutorial();
 	static void HandleCollisionBetweenPlayerAndObstacle(Player::Player player);
 	static void HandlePlayerFloorCollision(Player::Player player);
@@ -61,13 +72,19 @@ namespace Gameplay
 
 		deltaTime = GetFrameTime();
 		isGameStarted = false;
+		isGamePaused = false;
 	}
 
 	void Input()
 	{
 		if (IsKeyPressed(KEY_ESCAPE))
 		{
-			CosmicJump::currentScene = CosmicJump::Scenes::MainMenu;
+			isGamePaused = !isGamePaused;
+		}
+
+		if (isGamePaused)
+		{
+			return;
 		}
 
 		if (IsKeyPressed(KEY_SPACE) && isGameStarted)
@@ -93,7 +110,9 @@ namespace Gameplay
 	{
 		deltaTime = GetFrameTime();
 
-		if (isGameStarted)
+		UpdateButton(isGamePaused);
+
+		if (isGameStarted && !isGamePaused)
 		{
 			Background::Update(deltaTime);
 
@@ -118,8 +137,6 @@ namespace Gameplay
 				HandlePlayerFloorCollision(player2);
 			}
 		}
-
-		UpdateButton();
 	}
 
 	void Draw()
@@ -146,7 +163,18 @@ namespace Gameplay
 			DrawTutorial();
 		}
 
-		DrawButton();
+		if (isGamePaused)
+		{
+			DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {128,128,128,128});
+
+			int textWidth = MeasureText(TEXT_PAUSE.c_str(), TUTORIAL_FONT_SIZE);
+			int textX = (SCREEN_WIDTH - textWidth) / 2;
+			int textY = (SCREEN_HEIGHT - TUTORIAL_FONT_SIZE) / 2;
+
+			DrawText(TEXT_PAUSE.c_str(), textX, textY, TUTORIAL_FONT_SIZE, WHITE);
+		}
+
+		DrawButton(isGamePaused);
 
 		EndDrawing();
 	}
@@ -162,22 +190,60 @@ namespace Gameplay
 		float x = static_cast<float>(SCREEN_WIDTH) - BUTTON_WIDTH - BUTTON_MARGIN;
 		float y = BUTTON_MARGIN;
 
-		button = Button::Create(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, buttonName);
+		buttonPause = Button::Create(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, buttonPauseName);
+		buttonResume = Button::Create((SCREEN_WIDTH / 2) - 60, (SCREEN_HEIGHT / 2) + 30, BUTTON_WIDTH + 60, BUTTON_HEIGHT, buttonResumeName);
+		buttonMenu = Button::Create((SCREEN_WIDTH / 2) - 60, (SCREEN_HEIGHT / 2) + 100, BUTTON_WIDTH + 60, BUTTON_HEIGHT, buttonMenuName);
+		buttonExit = Button::Create((SCREEN_WIDTH / 2) - 60, (SCREEN_HEIGHT / 2) + 170, BUTTON_WIDTH + 60, BUTTON_HEIGHT, buttonExitName);
+		buttonMute = Button::Create(x - 100, y, BUTTON_WIDTH + 30, BUTTON_HEIGHT, buttonMuteName);
 	}
 
-	static void UpdateButton()
+	static void UpdateButton(bool& isPaused)
 	{
-		Button::Update(button);
+		Button::Update(buttonPause);
+		Button::Update(buttonMute);
 
-		if (button.clicked)
+		if (isPaused)
 		{
-			CosmicJump::currentScene = CosmicJump::Scenes::MainMenu;
+			Button::Update(buttonResume);
+			Button::Update(buttonMenu);
+			Button::Update(buttonExit);
+		
+			if (buttonResume.clicked)
+			{
+				isPaused = false;
+			}
+			if (buttonMenu.clicked)
+			{
+				CosmicJump::currentScene = CosmicJump::Scenes::MainMenu;
+			}
+			if (buttonExit.clicked)
+			{
+				CosmicJump::currentScene = CosmicJump::Scenes::Exit;
+			}
+		}
+
+		if (buttonPause.clicked)
+		{
+			isPaused = !isPaused;
+		}
+
+		if (buttonMute.clicked)
+		{
+			// mute
 		}
 	}
 
-	static void DrawButton()
+	static void DrawButton(bool isPaused)
 	{
-		Button::Draw(button);
+		Button::Draw(buttonPause);
+		Button::Draw(buttonMute);
+
+		if (isPaused)
+		{
+			Button::Draw(buttonResume);
+			Button::Draw(buttonMenu);
+			Button::Draw(buttonExit);
+		}
 	}
 
 	static void DrawTutorial()

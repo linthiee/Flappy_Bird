@@ -6,7 +6,8 @@ namespace CosmicJump
 	{
 		MainMenu,
 		Gameplay,
-		Credits
+		Credits,
+		Exit
 	};
 
 	extern Scenes currentScene;

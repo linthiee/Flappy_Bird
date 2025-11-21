@@ -96,6 +96,11 @@ namespace CosmicJump
 			Credits::Update();
 
 			break;
+		case CosmicJump::Scenes::Exit:
+
+			isRunning = false;
+
+			break;
 		default:
 
 			// THERE ARE NO OTHER SCENES
