@@ -34,6 +34,7 @@ namespace Obstacle
 		Move(obstacle, deltaTime);
 		Recycle(obstacle);
 	}
+
 	void Draw(Obstacle obstacle)
 	{
 		Texture2D currentTexture;
@@ -42,13 +43,13 @@ namespace Obstacle
 		case 0:
 			currentTexture = obstacleTexture1;
 			break;
-		case 1: 
+		case 1:
 			currentTexture = obstacleTexture2;
 			break;
 		case 2:
 			currentTexture = obstacleTexture3;
 			break;
-		default: 
+		default:
 			currentTexture = obstacleTexture1;
 			break;
 		}
@@ -90,7 +91,7 @@ namespace Obstacle
 		{
 			Rectangle dest =
 			{
-				obstacle.rectangleBottom.x + visualPaddingX, 
+				obstacle.rectangleBottom.x + visualPaddingX,
 				obstacle.rectangleBottom.y,
 				visualWidth,
 				visualHeight
