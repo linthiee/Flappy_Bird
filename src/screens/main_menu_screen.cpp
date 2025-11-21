@@ -107,6 +107,7 @@ namespace MainMenu
 	{
 		UnloadTexture(background.texture);
 		UnloadTexture(logoTexture);
+		CloseAudioDevice();
 	}
 
 	static void InitLogo()
