@@ -10,6 +10,7 @@ namespace Obstacle
 		Geometry::Rectangle rectangleBottom;
 		float speedX;
 		bool isActive;
+		bool passed;
 
 		int variant;
 	};
@@ -18,6 +19,7 @@ namespace Obstacle
 	void Draw(Obstacle obstacle);
 
 	Obstacle Create();
+	bool CheckForScore(Obstacle& obstacle, float birdXPosition);
 	void Reset(Obstacle& obstacle);
 
 	void Close();

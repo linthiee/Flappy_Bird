@@ -40,7 +40,7 @@ namespace Gameplay
 
 	static const std::string TEXT_CONTROLS = "Controls: SPACE to jump";
 	static const std::string TEXT_START_GAME = "Press SPACE to jump and start the game";
-	static const std::string TEXT_JUMP = "Second player press UP ARROW KEY to jump";
+	static const std::string TEXT_JUMP = "Second player is the RED raven. press UP ARROW KEY to jump";
 	static const std::string TEXT_PAUSE = "Game Paused";
 
 	static const int TUTORIAL_FONT_SIZE = 36;
@@ -58,6 +58,7 @@ namespace Gameplay
 	static void DrawTutorial();
 	static void HandleCollisionBetweenPlayerAndObstacle(Player::Player player);
 	static void HandlePlayerFloorCollision(Player::Player player);
+	static void DrawScore(int score);
 	static void Reset();
 
 	void Init()
@@ -125,6 +126,12 @@ namespace Gameplay
 
 			Obstacle::Update(obstacle, deltaTime);
 
+			if (Obstacle::CheckForScore(obstacle, player.rectangle.x))
+			{
+				player.score++;
+				//PlaySound(scoreSound);
+			}
+
 			HandleCollisionBetweenPlayerAndObstacle(player);
 			if (player2.isActive)
 			{
@@ -147,7 +154,7 @@ namespace Gameplay
 		Vector2 playerCenter = { player.rectangle.x + player.rectangle.width / 2, player.rectangle.y + player.rectangle.height / 2 };
 
 		Background::Draw();
-		Background::KrakenEye::Draw(playerCenter, deltaTime); 
+		Background::KrakenEye::Draw(playerCenter, deltaTime);
 
 		Player::Draw(player, WHITE);
 
@@ -157,6 +164,7 @@ namespace Gameplay
 		}
 
 		Obstacle::Draw(obstacle);
+		DrawScore(player.score);
 
 		if (!isGameStarted)
 		{
@@ -165,7 +173,7 @@ namespace Gameplay
 
 		if (isGamePaused)
 		{
-			DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {128,128,128,128});
+			DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 128,128,128,128 });
 
 			int textWidth = MeasureText(TEXT_PAUSE.c_str(), TUTORIAL_FONT_SIZE);
 			int textX = (SCREEN_WIDTH - textWidth) / 2;
@@ -207,7 +215,7 @@ namespace Gameplay
 			Button::Update(buttonResume);
 			Button::Update(buttonMenu);
 			Button::Update(buttonExit);
-		
+
 			if (buttonResume.clicked)
 			{
 				isPaused = false;
@@ -291,6 +299,22 @@ namespace Gameplay
 			Reset();
 			isGameStarted = false;
 		}
+	}
+
+	void DrawScore(int score)
+	{
+		const char* scoreText = TextFormat("%i", score);
+
+		int fontSize = 50;
+
+		int textWidth = MeasureText(scoreText, fontSize);
+
+		int x =	SCREEN_WIDTH / 2 - textWidth / 2;
+		int y = 50;
+
+		DrawText(scoreText, x + 3, y + 3, fontSize, BLACK);
+
+		DrawText(scoreText, x, y, fontSize, WHITE);
 	}
 
 	static void Reset()

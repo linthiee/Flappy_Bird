@@ -9,6 +9,7 @@ namespace Player
 	{
 		Texture texture;
 		Geometry::Rectangle rectangle;
+		int score;
 		float speedX;
 		float speedY;
 		bool isActive;

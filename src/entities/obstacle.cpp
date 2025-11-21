@@ -102,17 +102,19 @@ namespace Obstacle
 			DrawTexturePro(currentTexture, source, dest, { 0.0f, 0.0f }, 0.0f, WHITE);
 		}
 	}
+
 	Obstacle Create()
 	{
-		InitTextures();
-
 		Obstacle newObstacle = {};
 
 		RandomizeVerticalPosition(newObstacle);
 		newObstacle.speedX = SPEED_X;
 		newObstacle.isActive = true;
+		newObstacle.passed = false; 
 
 		newObstacle.variant = GetRandomValue(0, 2);
+
+		InitTextures();
 
 		return newObstacle;
 	}
@@ -120,6 +122,17 @@ namespace Obstacle
 	void Reset(Obstacle& obstacle)
 	{
 		RandomizeVerticalPosition(obstacle);
+		obstacle.passed = false; 
+	}
+
+	bool CheckForScore(Obstacle& obstacle, float birdXPosition)
+	{
+		if (obstacle.isActive && !obstacle.passed && (obstacle.rectangleTop.x + obstacle.rectangleTop.width < birdXPosition))
+		{
+			obstacle.passed = true;
+			return true;
+		}
+		return false;
 	}
 
 	void InitTextures()
@@ -141,6 +154,7 @@ namespace Obstacle
 		{
 			RandomizeVerticalPosition(obstacle);
 			obstacle.variant = GetRandomValue(0, 2);
+			obstacle.passed = false;
 		}
 	}
 

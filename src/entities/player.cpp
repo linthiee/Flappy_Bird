@@ -67,6 +67,7 @@ namespace Player
 		newPlayer.speedY = 0.0f;
 		newPlayer.isActive = true;
 		newPlayer.rotation = 0.0f;
+		newPlayer.score = 0;
 
 		InitTexture();
 
@@ -78,6 +79,7 @@ namespace Player
 		player.rectangle.x = defaultPosX;
 		player.rectangle.y = defaultPosY;
 		player.speedY = 0.0f;
+		player.score = 0;
 	}
 
 	void Jump(Player& player)
